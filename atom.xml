@@ -1,13 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://linsanorg.github.io</id>
-    <title>Gridea</title>
-    <updated>2020-05-30T02:04:08.035Z</updated>
+    <title>运维笔记</title>
+    <updated>2020-05-30T05:24:19.359Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://linsanorg.github.io"/>
     <link rel="self" href="https://linsanorg.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
     <logo>https://linsanorg.github.io/images/avatar.png</logo>
     <icon>https://linsanorg.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, Gridea</rights>
+    <rights>All rights reserved 2020, 运维笔记</rights>
+    <entry>
+        <title type="html"><![CDATA[linux脚本收藏]]></title>
+        <id>https://linsanorg.github.io/post/linux-jiao-ben-shou-cang/</id>
+        <link href="https://linsanorg.github.io/post/linux-jiao-ben-shou-cang/">
+        </link>
+        <updated>2020-05-30T05:23:59.000Z</updated>
+        <content type="html"><![CDATA[<h5 id="替换atxt里的内容100替换成200">替换a.txt里的内容，100替换成200</h5>
+<pre><code>sed -i 's/100/200/g' a.txt
+</code></pre>
+<h5 id="替换部分内容">替换部分内容</h5>
+<pre><code>[root@localhost ~]# cat test.cfg 
+aaa=111
+bbb=222
+ccc=333
+[root@localhost ~]# sed -i 's/111/123456/g' test.cfg
+[root@localhost ~]# cat test.cfg 
+aaa=123456
+bbb=222
+ccc=333
+</code></pre>
+<h5 id="生成配置文件备份原来的">生成配置文件备份原来的</h5>
+<pre><code>#!/bin/bash
+mv /root/test.txt /root/test.bak
+cat &lt;&lt; EOF &gt; /root/test.txt
+Hello!
+My site is www.361way.com
+My site is www.91it.org
+Test for cat and EOF!
+EOF
+cat /root/test.txt &gt; /root/a.log
+</code></pre>
+<h5 id="循环执行脚本">循环执行脚本</h5>
+<pre><code>for i in `seq 1 5`
+do
+        cp demo.xml vm${i}.xml &amp;&amp; cp demo.qcow2 /var/lib/libvirt/images/vm${i}.qcow2
+        sed -i &quot;s/&lt;uuid&gt;uuid/&lt;uuid&gt;$(uuidgen)/g&quot; vm${i}.xml
+        sed -i &quot;s/&lt;name&gt;name/&lt;name&gt;peer${i}/g&quot; vm${i}.xml
+        sed -i &quot;s/sdb1/sdb${i}/g&quot; vm${i}.xml
+        sed -i &quot;s/vm1.qcow2/vm${i}.qcow2/g&quot; vm${i}.xml
+        MACADDR=&quot;52:54:$(dd if=/dev/urandom count=1 2&gt;/dev/null | md5sum | sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')&quot;
+        sed -i &quot;s/..:..:..:..:..:../$MACADDR/&quot; vm${i}.xml
+	virsh define /root/kvm/vm${i}.xml
+
+done
+</code></pre>
+<h5 id="创建vdb1分区并xfs格式化挂载到data1">创建vdb1分区并xfs格式化，挂载到/data1</h5>
+<pre><code>#!/bin/bash
+mkdir /data1
+echo &quot;n
+p
+
+
+w
+&quot;|fdisk /dev/vdb &amp;&amp; mkfs.xfs -f /dev/vdb1 &amp;&amp; mount /dev/vdb1 /data1
+echo /dev/vdb1  /data1  xfs     defaults        0       0 &gt;&gt; /etc/fstab
+</code></pre>
+<h5 id="查找vm1-vm18-xml文件包含address的那一行的内容提取到rootkvmmaclog">查找vm1-vm18 xml文件，包含address=的那一行的内容提取到/root/kvm/mac.log</h5>
+<pre><code>#!/bin/sh
+for i in `seq 1 18`
+do
+mac=$(cat /root/kvm/vm${i}.xml|grep &quot;address=&quot;)
+echo vm${i} $mac \ &gt;&gt; /root/kvm/mac.log
+done</code></pre>
+]]></content>
+    </entry>
 </feed>

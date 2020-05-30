@@ -1,9 +1,11 @@
+
+<!DOCTYPE html>
 <html>
   <head>
     
 <meta charset="utf-8" >
 
-<title>运维笔记</title>
+<title>linux脚本收藏 | 运维笔记</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -75,32 +77,82 @@
 </transition>
 
 
-        <div class="content-container">
+      <div class="content-container">
+        <div class="post-detail">
           
-          
+          <h2 class="post-title">linux脚本收藏</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2020-05-30</span>
+            
+          </div>
+          <div class="post-content">
+            <h5 id="替换atxt里的内容100替换成200">替换a.txt里的内容，100替换成200</h5>
+<pre><code>sed -i 's/100/200/g' a.txt
+</code></pre>
+<h5 id="替换部分内容">替换部分内容</h5>
+<pre><code>[root@localhost ~]# cat test.cfg 
+aaa=111
+bbb=222
+ccc=333
+[root@localhost ~]# sed -i 's/111/123456/g' test.cfg
+[root@localhost ~]# cat test.cfg 
+aaa=123456
+bbb=222
+ccc=333
+</code></pre>
+<h5 id="生成配置文件备份原来的">生成配置文件备份原来的</h5>
+<pre><code>#!/bin/bash
+mv /root/test.txt /root/test.bak
+cat &lt;&lt; EOF &gt; /root/test.txt
+Hello!
+My site is www.361way.com
+My site is www.91it.org
+Test for cat and EOF!
+EOF
+cat /root/test.txt &gt; /root/a.log
+</code></pre>
+<h5 id="循环执行脚本">循环执行脚本</h5>
+<pre><code>for i in `seq 1 5`
+do
+        cp demo.xml vm${i}.xml &amp;&amp; cp demo.qcow2 /var/lib/libvirt/images/vm${i}.qcow2
+        sed -i &quot;s/&lt;uuid&gt;uuid/&lt;uuid&gt;$(uuidgen)/g&quot; vm${i}.xml
+        sed -i &quot;s/&lt;name&gt;name/&lt;name&gt;peer${i}/g&quot; vm${i}.xml
+        sed -i &quot;s/sdb1/sdb${i}/g&quot; vm${i}.xml
+        sed -i &quot;s/vm1.qcow2/vm${i}.qcow2/g&quot; vm${i}.xml
+        MACADDR=&quot;52:54:$(dd if=/dev/urandom count=1 2&gt;/dev/null | md5sum | sed 's/^\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4/')&quot;
+        sed -i &quot;s/..:..:..:..:..:../$MACADDR/&quot; vm${i}.xml
+	virsh define /root/kvm/vm${i}.xml
 
-<div class="archives-container">
-  
-    <h2 class="year">2020</h2>
-    
-      
-        <article class="post">
-          <a href="https://linsanorg.github.io/post/linux-jiao-ben-shou-cang/">
-            <h2 class="post-title">
-              linux脚本收藏
-              <small>2020-05-30</small>
-            </h2>
-          </a>
-        </article>
-      
-    
-  
-</div>
+done
+</code></pre>
+<h5 id="创建vdb1分区并xfs格式化挂载到data1">创建vdb1分区并xfs格式化，挂载到/data1</h5>
+<pre><code>#!/bin/bash
+mkdir /data1
+echo &quot;n
+p
 
 
+w
+&quot;|fdisk /dev/vdb &amp;&amp; mkfs.xfs -f /dev/vdb1 &amp;&amp; mount /dev/vdb1 /data1
+echo /dev/vdb1  /data1  xfs     defaults        0       0 &gt;&gt; /etc/fstab
+</code></pre>
+<h5 id="查找vm1-vm18-xml文件包含address的那一行的内容提取到rootkvmmaclog">查找vm1-vm18 xml文件，包含address=的那一行的内容提取到/root/kvm/mac.log</h5>
+<pre><code>#!/bin/sh
+for i in `seq 1 18`
+do
+mac=$(cat /root/kvm/vm${i}.xml|grep &quot;address=&quot;)
+echo vm${i} $mac \ &gt;&gt; /root/kvm/mac.log
+done</code></pre>
+
+          </div>
         </div>
 
-        <div class="site-footer">
+        
+      </div>
+
+      
+
+      <div class="site-footer">
   <div class="slogan">温故而知新</div>
   <div class="social-container">
     
@@ -119,8 +171,8 @@
 </div>
 
 
-      </div>
-      <script type="application/javascript">
+    </div>
+    <script type="application/javascript">
 
 hljs.initHighlightingOnLoad()
 
@@ -136,6 +188,5 @@ var app = new Vue({
 
 
 
-    </div>
   </body>
 </html>
